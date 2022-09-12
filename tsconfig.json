@@ -1,14 +1,15 @@
 {
-  "compilerOptions": {
-    "outDir": "lib",
-    "declaration": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "strict": true,
-    "target": "esnext"
-  },
-  "include": [
-    "src",
-    "./global.d.ts",
-  ]
+    "compilerOptions": {
+        "sourceMap": true,
+        "outDir": "lib",
+        "declaration": true,
+        "module": "esnext",
+        "moduleResolution": "node",
+        "strict": true,
+        "target": "esnext"
+    },
+    "include": [
+        "src",
+        "./global.d.ts",
+    ]
 }

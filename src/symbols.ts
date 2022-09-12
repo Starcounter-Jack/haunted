@@ -12,13 +12,13 @@ type Phase = typeof updateSymbol | typeof commitSymbol | typeof effectsSymbol;
 const contextEvent = 'haunted.context';
 
 export {
-  phaseSymbol,
-  hookSymbol,
-  updateSymbol,
-  commitSymbol,
-  effectsSymbol,
-  layoutEffectsSymbol,
-  contextEvent,
-  Phase,
-  EffectsSymbols,
+    phaseSymbol,
+    hookSymbol,
+    updateSymbol,
+    commitSymbol,
+    effectsSymbol,
+    layoutEffectsSymbol,
+    contextEvent,
+    Phase,
+    EffectsSymbols,
 };

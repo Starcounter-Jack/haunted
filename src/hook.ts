@@ -1,39 +1,39 @@
-import { current, notify } from './interface';
-import { State } from './state';
-import { hookSymbol } from './symbols';
+import { current, notify } from './interface.js';
+import { State } from './state.js';
+import { hookSymbol } from './symbols.js';
 
 abstract class Hook<P extends unknown[] = unknown[], R = unknown, H = unknown> {
-  id: number;
-  state: State<H>;
+    id: number;
+    state: State<H>;
 
-  constructor(id: number, state: State<H>) {
-    this.id = id;
-    this.state = state;
-  }
+    constructor(id: number, state: State<H>) {
+        this.id = id;
+        this.state = state;
+    }
 
-  abstract update(...args: P): R;
-  teardown?(): void;
+    abstract update(...args: P): R;
+    teardown?(): void;
 }
 
 interface CustomHook<P extends unknown[] = unknown[], R = unknown, H = unknown> {
-  new (id: number, state: State<H>, ...args: P): Hook<P, R, H>;
+    new(id: number, state: State<H>, ...args: P): Hook<P, R, H>;
 }
 
 function use<P extends unknown[], R, H = unknown>(Hook: CustomHook<P, R, H>, ...args: P): R {
-  let id = notify();
-  let hooks = current![hookSymbol];
+    let id = notify();
+    let hooks = current![hookSymbol];
 
-  let hook = hooks.get(id) as Hook<P, R, H> | undefined;
-  if(!hook) {
-    hook = new Hook(id, current as State<H>, ...args);
-    hooks.set(id, hook);
-  }
+    let hook = hooks.get(id) as Hook<P, R, H> | undefined;
+    if (!hook) {
+        hook = new Hook(id, current as State<H>, ...args);
+        hooks.set(id, hook);
+    }
 
-  return hook.update(...args);
+    return hook.update(...args);
 }
 
 function hook<P extends unknown[], R, H = unknown>(Hook: CustomHook<P, R, H>): (...args: P) => R {
-  return use.bind<null, CustomHook<P, R, H>, P, R>(null, Hook);
+    return use.bind<null, CustomHook<P, R, H>, P, R>(null, Hook);
 }
 
 export { hook, Hook };

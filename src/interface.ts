@@ -1,19 +1,19 @@
-import { State } from './state';
+import { State } from './state.js';
 
 let current: State | null;
 let currentId = 0;
 
 function setCurrent(state: State): void {
-  current = state;
+    current = state;
 }
 
 function clear(): void {
-  current = null;
-  currentId = 0;
+    current = null;
+    currentId = 0;
 }
 
 function notify(): number {
-  return currentId++;
+    return currentId++;
 }
 
 export { clear, current, setCurrent, notify }

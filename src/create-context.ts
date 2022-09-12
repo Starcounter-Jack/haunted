@@ -1,88 +1,88 @@
-import { ComponentConstructor, ComponentCreator } from './component';
-import { contextEvent } from './symbols';
-import { useContext } from './use-context';
+import { ComponentConstructor, ComponentCreator } from './component.js';
+import { contextEvent } from './symbols.js';
+import { useContext } from './use-context.js';
 
 interface ConsumerProps<T> {
-  render: (value: T) => unknown,
+    render: (value: T) => unknown,
 }
 
 interface Creator {
-  <T>(defaultValue: T): Context<T>;
+    <T>(defaultValue: T): Context<T>;
 }
 
 interface Context<T> {
-  Provider: ComponentConstructor<{}>;
-  Consumer: ComponentConstructor<ConsumerProps<T>>;
-  defaultValue: T;
+    Provider: ComponentConstructor<{}>;
+    Consumer: ComponentConstructor<ConsumerProps<T>>;
+    defaultValue: T;
 }
 
 interface ContextDetail<T> {
-  Context: Context<T>;
-  callback: (value: T) => void;
+    Context: Context<T>;
+    callback: (value: T) => void;
 
-  // These properties will not exist if a context consumer lacks a provider
-  value: T;
-  unsubscribe?: (this: Context<T>) => void;
+    // These properties will not exist if a context consumer lacks a provider
+    value: T;
+    unsubscribe?: (this: Context<T>) => void;
 }
 
 function makeContext(component: ComponentCreator): Creator {
-  return <T>(defaultValue: T): Context<T> => {
-    const Context: Context<T> = {
-      Provider: class extends HTMLElement {
-        listeners: Set<(value: T) => void>;
-        _value!: T;
+    return <T>(defaultValue: T): Context<T> => {
+        const Context: Context<T> = {
+            Provider: class extends HTMLElement {
+                listeners: Set<(value: T) => void>;
+                _value!: T;
 
-        constructor() {
-          super();
-          this.listeners = new Set();
+                constructor() {
+                    super();
+                    this.listeners = new Set();
 
-          this.addEventListener(contextEvent, this);
-        }
+                    this.addEventListener(contextEvent, this);
+                }
 
-        disconnectedCallback(): void {
-          this.removeEventListener(contextEvent, this);
-        }
+                disconnectedCallback(): void {
+                    this.removeEventListener(contextEvent, this);
+                }
 
-        handleEvent(event: CustomEvent<ContextDetail<T>>): void {
-          const { detail } = event;
+                handleEvent(event: CustomEvent<ContextDetail<T>>): void {
+                    const { detail } = event;
 
-          if (detail.Context === Context) {
-            detail.value = this.value;
-            detail.unsubscribe = this.unsubscribe.bind(this, detail.callback);
+                    if (detail.Context === Context) {
+                        detail.value = this.value;
+                        detail.unsubscribe = this.unsubscribe.bind(this, detail.callback);
 
-            this.listeners.add(detail.callback);
+                        this.listeners.add(detail.callback);
 
-            event.stopPropagation();
-          }
-        }
+                        event.stopPropagation();
+                    }
+                }
 
-        unsubscribe(callback: (value: T) => void): void {
-          this.listeners.delete(callback);
-        }
+                unsubscribe(callback: (value: T) => void): void {
+                    this.listeners.delete(callback);
+                }
 
-        set value(value: T) {
-          this._value = value;
-          for (let callback of this.listeners) {
-            callback(value);
-          }
-        }
+                set value(value: T) {
+                    this._value = value;
+                    for (let callback of this.listeners) {
+                        callback(value);
+                    }
+                }
 
-        get value(): T {
-          return this._value;
-        }
-      },
+                get value(): T {
+                    return this._value;
+                }
+            },
 
-      Consumer: component<ConsumerProps<T>>(function({ render }: ConsumerProps<T>): unknown {
-        const context = useContext(Context);
+            Consumer: component<ConsumerProps<T>>(function ({ render }: ConsumerProps<T>): unknown {
+                const context = useContext(Context);
 
-        return render(context);
-      }),
+                return render(context);
+            }),
 
-      defaultValue,
+            defaultValue,
+        };
+
+        return Context;
     };
-
-    return Context;
-  };
 }
 
 export { makeContext, Creator as ContextCreator, Context, ContextDetail };

@@ -1,9 +1,9 @@
-import { State, Callable } from './state';
-import { layoutEffectsSymbol } from './symbols';
-import { createEffect } from './create-effect';
+import { State, Callable } from './state.js';
+import { layoutEffectsSymbol } from './symbols.js';
+import { createEffect } from './create-effect.js';
 
 function setLayoutEffects(state: State, cb: Callable) {
-  state[layoutEffectsSymbol].push(cb);
+    state[layoutEffectsSymbol].push(cb);
 }
 
 /**

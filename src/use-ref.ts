@@ -1,4 +1,4 @@
-import { useMemo } from './use-memo';
+import { useMemo } from './use-memo.js';
 
 /**
  * @function

@@ -1,9 +1,9 @@
-import { State, Callable } from './state';
-import { effectsSymbol } from './symbols';
-import { createEffect } from './create-effect';
+import { State, Callable } from './state.js';
+import { effectsSymbol } from './symbols.js';
+import { createEffect } from './create-effect.js';
 
 function setEffects(state: State, cb: Callable) {
-  state[effectsSymbol].push(cb);
+    state[effectsSymbol].push(cb);
 }
 
 /**
